@@ -1,26 +1,25 @@
-import 'dart:developer';
-
 import "package:flutter/material.dart";
+import 'package:flutter/scheduler.dart';
 
 import 'index.dart';
 
 class MultiDirectionalHorizontalList extends StatefulWidget {
-  // @required
+  /// @required
   final int itemCount;
-
-  // @optional
-  final int delta;
 
   /// A function that converts a context and an index to a Widget to be rendered
   final IndexedWidgetBuilder itemBuilder;
 
-  // @optional
-  final double startScrollPosition;
+  /// @optional
+  final int delta;
 
-  // @optional
+  /// @optional
+  final double initialScrollOffset;
+
+  /// @optional
   final Duration duration;
 
-  // @optional
+  /// @optional
   final double height;
 
   /// @optional
@@ -35,8 +34,8 @@ class MultiDirectionalHorizontalList extends StatefulWidget {
     this.controller,
     this.height = 40,
     this.delta = 50,
-    this.startScrollPosition = 0,
-    this.duration = const Duration(milliseconds: 100),
+    this.initialScrollOffset = 0,
+    this.duration = const Duration(milliseconds: 600),
   });
 
   @override
@@ -46,26 +45,53 @@ class MultiDirectionalHorizontalList extends StatefulWidget {
 
 class _MultiDirectionalHorizontalListState
     extends State<MultiDirectionalHorizontalList> {
+  late final ScrollController _scrollController;
+
   final List<int> left = [];
   final List<int> right = [];
 
   @override
   void initState() {
-    widget.controller?.attach()?.listen((event) {
-      switch (event.command) {
-        case ControllerCommandTypes.jumpToPosition:
-          // _jumpToPosition(event.data as int);
-          break;
-        case ControllerCommandTypes.animateToPosition:
-          // _animateToPosition(event.data as int);
-          break;
-      }
-      log(event.toString());
-    });
-
+    initialiseScrollController();
+    initialiseFeedBackController();
     populateLeftAndRightList(widget.itemCount);
 
     super.initState();
+  }
+
+  initialiseScrollController() {
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
+
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      _scrollController.animateTo(
+        widget.initialScrollOffset,
+        duration: widget.duration,
+        curve: const ElasticOutCurve(0.7),
+      );
+    });
+  }
+
+  initialiseFeedBackController() {
+    widget.controller?.attach()?.listen((event) {
+      switch (event.command) {
+        case ControllerCommandTypes.jumpToPosition:
+          _jumpToPosition(event.data as double);
+          break;
+        case ControllerCommandTypes.animateToPosition:
+          _animateToPosition(
+            widget.duration,
+            position: event.data as double,
+          );
+          break;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    widget.controller?.disposeListeners();
+    super.dispose();
   }
 
   populateLeftAndRightList(int count) {
@@ -87,23 +113,64 @@ class _MultiDirectionalHorizontalListState
     }
   }
 
-  @override
-  void dispose() {
-    widget.controller?.disposeListeners();
-    super.dispose();
+  _jumpToPosition(double? position) {
+    _scrollController.jumpTo(
+      position ?? widget.initialScrollOffset,
+    );
+  }
+
+  _animateToPosition(Duration duration, {double? position}) {
+    _scrollController.animateTo(
+      position ?? widget.initialScrollOffset,
+      duration: duration,
+      curve: Curves.fastOutSlowIn,
+    );
+  }
+
+  _scrollListener() {
+  //   if (_scrollController.offset >=
+  //       _scrollController.position.maxScrollExtent - widget.delta) {
+  //     _onEndReached();
+  //     if (widget.onTopLoaded != null) {
+  //       widget.onTopLoaded!();
+  //     }
+  //   }
+  //   if (_scrollController.offset <=
+  //       _scrollController.position.minScrollExtent + widget.delta) {
+  //     _onStartReached();
+  //     if (widget.onBottomLoaded != null) {
+  //       widget.onBottomLoaded!();
+  //     }
+  //   }
+  //   if (widget.controller != null) {
+  //     widget.onScroll!(_scrollController.offset);
+  //   }
+  // }
+  //
+  // _onEndReached() {
+  //   setState(() {
+  //     bottom.add(bottom.length);
+  //   });
+  // }
+  //
+  // _onStartReached() {
+  //   setState(() {
+  //     top.add(-top.length - 1);
+  //   });
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 100,
-      color: Colors.greenAccent,
+      height: widget.height,
       child: CustomScrollView(
+        key: const Key("CustomScrollView"),
+        controller: _scrollController,
         scrollDirection: Axis.horizontal,
         center: const ValueKey('right-sliver-list'),
         slivers: <Widget>[
           SliverList(
-            key: const ValueKey('left-sliver-list'),
+            // key: const ValueKey('left-sliver-list'),
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
                 return widget.itemBuilder(context, left[index]);

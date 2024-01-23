@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:multi_directional_horizontal_list/multi_directional_horizontal_list.dart';
 
@@ -8,7 +10,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   // This is a parameter to support testing in this repo
   final MultiDirectionalHorizontalListController? testingController;
+
   const MyHomePage({
     super.key,
     required this.title,
@@ -43,24 +45,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   initState() {
-    controller = widget.testingController ?? MultiDirectionalHorizontalListController()
-      ..addListener((event) {
-        _handleCallbackEvent(event);
-      });
-
-    Future.delayed(Duration(seconds: 1), () {
-      controller.jumpToPosition(5);
-      controller.jumpToPosition(10);
-      controller.jumpToPosition(3);
-      controller.jumpToPosition(2);
-    });
-
-
+    controller =
+        widget.testingController ?? MultiDirectionalHorizontalListController()
+          ..addListener((event) {
+            _handleCallbackEvent(event);
+          });
   }
 
   void _handleCallbackEvent(ScrollEvent event) {
-    print(
-        "Scroll callback received with data: {direction: ${event.direction}}");
+    log("Scroll callback received with data: {direction: ${event.direction}}");
   }
 
   @override
@@ -70,12 +63,23 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: MultiDirectionalHorizontalList(
-        controller: controller,
-        itemCount: 51,
-        itemBuilder: (context, index) {
-          return Text("data $index");
-        },
+      body: ColoredBox(
+        color: Colors.pinkAccent,
+        child: MultiDirectionalHorizontalList(
+          controller: controller,
+          initialScrollOffset: 200,
+          itemCount: 51,
+          // height: 50,
+          itemBuilder: (context, index) {
+            return Container(
+              width: 100,
+              child: Text(
+                "data $index",
+                textAlign: TextAlign.left,
+              ),
+            );
+          },
+        ),
       ),
     );
   }
