@@ -44,8 +44,8 @@ class MultiDirectionalHorizontalListController {
 
   /// Command the list to switch to the given [position] in a synchronous and
   /// immediate manner. There will be no animation. To animate, use
-  /// [animateToPosition] instead.
-  void jumpToPosition(double position) {
+  /// [animateTo] instead.
+  void jumpTo(double position) {
     _feedback?.sink.add(ControllerFeedback(
       ControllerCommandTypes.jumpToPosition,
       data: position,
@@ -53,8 +53,8 @@ class MultiDirectionalHorizontalListController {
   }
 
   /// Command the list to move to the given [position] in an animated manner.
-  /// To ignore animation, use [jumpToPosition] instead
-  Future<void> animateToPosition(double position) async {
+  /// To ignore animation, use [jumpTo] instead
+  Future<void> animateTo(double position) async {
     _feedback?.sink.add(ControllerFeedback(
       ControllerCommandTypes.animateToPosition,
       data: position,

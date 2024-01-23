@@ -2,7 +2,6 @@
 
 [![pub package](https://img.shields.io/pub/v/sticky_grouped_list.svg)](https://pub.dev/packages/sticky_grouped_list)
 [![package publisher](https://img.shields.io/pub/publisher/sticky_grouped_list.svg)](https://pub.dev/packages/sticky_grouped_list)
-![build](https://github.com/Dimibe/sticky_grouped_list/actions/workflows/main.yaml/badge.svg??branch=main)
 
 A `ListView` in which list items can be horizontally scrolled in multi direction.
 
@@ -32,40 +31,40 @@ import 'package:multi_directional_horizontal_list/multi_directional_horizontal_l
 Create a `MultiDirectionalHorizontalList` Widget:
 
  ```Dart
-  final GroupedItemScrollController itemScrollController = GroupedItemScrollController();
+  final MultiDirectionalHorizontalListController controller = MultiDirectionalHorizontalListController();
 
-  StickyGroupedListView<dynamic, String>(
-    elements: _elements,
-    groupBy: (dynamic element) => element['group'],
-    groupSeparatorBuilder: (dynamic element) => Text(element['group']),
-    itemBuilder: (context, dynamic element) => Text(element['name']),
-    itemComparator: (e1, e2) => e1['name'].compareTo(e2['name']), // optional
-    elementIdentifier: (element) => element.name // optional - see below for usage
-    itemScrollController: itemScrollController, // optional
-    order: StickyGroupedListOrder.ASC, // optional
-  );
+   MultiDirectionalHorizontalList(
+        controller: controller,
+        initialScrollOffset: 200,
+        itemCount: 20,
+         onLeftLoaded: () {
+            print("Reached left end");
+         },
+         onRightLoaded: () {
+            print("Reached right end");
+         },
+         itemBuilder: (context, index) {
+            return SizedBox();
+         }
+     );
 ```
 
-If you are using the `GroupedItemScrollController` you can scroll or jump to an specific position in the list programatically:
+If you are using the `MultiDirectionalHorizontalListController` you can animate or jump to an specific position in the list programmatically:
 
-1. By using the index, which will scroll to the element at position [index]:
-```dart
-  itemScrollController.scrollTo(index: 4, duration: Duration(seconds: 2));
-  itemScrollController.jumpTo(index: 4);
+By using the index, which will scroll to the element at position [index]:
+```Dart
+  final MultiDirectionalHorizontalListController controller = MultiDirectionalHorizontalListController();
+
+  controller.animateTo(4);
+  controller.jumpTo(4);
 ```
 
-2. By using a pre defined element identifier. The identifier is defined by a `Function` which takes one element and returns a unique identifier of any type.
-   The methods `scrollToElement` and `jumpToElement` can be used to jump to an element by providing the elements identifier instead of the index:
-```dart
-  final GroupedItemScrollController itemScrollController = GroupedItemScrollController();
+If you are using the `MultiDirectionalHorizontalListController` you can attach a listener and listen to scroll events like direction or position:
 
-  StickyGroupedListView<dynamic, String>(
-    elements: _elements,
-    elementIdentifier: (element) => element.name
-    itemScrollController: itemScrollController, 
-    [...]
-  );
+By using the listener, we can grab hold of position and direction:
+```Dart
+  final MultiDirectionalHorizontalListController controller = MultiDirectionalHorizontalListController();
 
-  itemScrollController.scrollToElement(identifier: 'item-1', duration: Duration(seconds: 2));
-  itemScrollController.jumpToElement(identifier: 'item-2');
+    controller()
+    ..addListener((event) {});
 ```
