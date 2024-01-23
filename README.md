@@ -8,11 +8,9 @@ A `ListView` in which list items can be horizontally scrolled in multi direction
 <img src="https://raw.githubusercontent.com/Dimibe/sticky_grouped_list/master/assets/new-screenshot-for-readme.png" width="300"> <img src="https://raw.githubusercontent.com/Dimibe/sticky_grouped_list/master/assets/chat.png" width="300">
 
 ## Features
-* Easy creation of chat-like interfaces.
-* List items can be separated in groups.
-* For the groups an individual header can be set.
-* Sticky headers with floating option.
-* All fields from `ScrollablePositionedList` available.
+* Easy creation of horizontal timeline-like interfaces.
+* Back and Forth communication at ease
+* Opportunity to jump or animate to an index programmatically
 
 ## Getting Started
 
@@ -66,5 +64,5 @@ By using the listener, we can grab hold of position and direction:
   final MultiDirectionalHorizontalListController controller = MultiDirectionalHorizontalListController();
 
     controller()
-    ..addListener((event) {});
+        ..addListener((event) {});
 ```
