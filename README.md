@@ -1,3 +1,5 @@
+# multi_directional_horizontal_list
+
 [![pub package](https://img.shields.io/pub/v/sticky_grouped_list.svg)](https://pub.dev/packages/sticky_grouped_list)
 [![package publisher](https://img.shields.io/pub/publisher/sticky_grouped_list.svg)](https://pub.dev/packages/sticky_grouped_list)
 ![build](https://github.com/Dimibe/sticky_grouped_list/actions/workflows/main.yaml/badge.svg??branch=main)
@@ -6,7 +8,7 @@ A `ListView` in which list items can be horizontally scrolled in multi direction
 
 <img src="https://raw.githubusercontent.com/Dimibe/sticky_grouped_list/master/assets/new-screenshot-for-readme.png" width="300"> <img src="https://raw.githubusercontent.com/Dimibe/sticky_grouped_list/master/assets/chat.png" width="300">
 
-### Features
+## Features
 * Easy creation of chat-like interfaces.
 * List items can be separated in groups.
 * For the groups an individual header can be set.

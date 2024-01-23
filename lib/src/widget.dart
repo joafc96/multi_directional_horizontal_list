@@ -1,4 +1,8 @@
+import 'dart:developer';
+
 import "package:flutter/material.dart";
+
+import 'index.dart';
 
 class MultiDirectionalHorizontalList extends StatefulWidget {
   // @required
@@ -7,8 +11,8 @@ class MultiDirectionalHorizontalList extends StatefulWidget {
   // @optional
   final int delta;
 
-  // @required
-  final Function(BuildContext context, int index) itemBuilder;
+  /// A function that converts a context and an index to a Widget to be rendered
+  final IndexedWidgetBuilder itemBuilder;
 
   // @optional
   final double startScrollPosition;
@@ -19,22 +23,16 @@ class MultiDirectionalHorizontalList extends StatefulWidget {
   // @optional
   final double height;
 
-  // @optional
-  final Function? onTopLoaded;
-
-  // @optional
-  final Function? onBottomLoaded;
-
-  // @optional
-  final Function? onScroll;
+  /// @optional
+  /// An optional controller to request changes and to notify consumers of changes
+  /// via an optional listener
+  final MultiDirectionalHorizontalListController? controller;
 
   const MultiDirectionalHorizontalList({
     super.key,
     required this.itemCount,
     required this.itemBuilder,
-    this.onTopLoaded,
-    this.onBottomLoaded,
-    this.onScroll,
+    this.controller,
     this.height = 40,
     this.delta = 50,
     this.startScrollPosition = 0,
@@ -53,7 +51,20 @@ class _MultiDirectionalHorizontalListState
 
   @override
   void initState() {
+    widget.controller?.attach()?.listen((event) {
+      switch (event.command) {
+        case ControllerCommandTypes.jumpToPosition:
+          // _jumpToPosition(event.data as int);
+          break;
+        case ControllerCommandTypes.animateToPosition:
+          // _animateToPosition(event.data as int);
+          break;
+      }
+      log(event.toString());
+    });
+
     populateLeftAndRightList(widget.itemCount);
+
     super.initState();
   }
 
@@ -74,9 +85,12 @@ class _MultiDirectionalHorizontalListState
     for (int i = 0; i < middleIndex; i++) {
       right.add(i);
     }
+  }
 
-    print("left: $left");
-    print("right: $right");
+  @override
+  void dispose() {
+    widget.controller?.disposeListeners();
+    super.dispose();
   }
 
   @override

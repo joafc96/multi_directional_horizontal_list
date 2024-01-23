@@ -24,7 +24,13 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  // This is a parameter to support testing in this repo
+  final MultiDirectionalHorizontalListController? testingController;
+  const MyHomePage({
+    super.key,
+    required this.title,
+    this.testingController,
+  });
 
   final String title;
 
@@ -33,12 +39,28 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  late MultiDirectionalHorizontalListController controller;
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
+  @override
+  initState() {
+    controller = widget.testingController ?? MultiDirectionalHorizontalListController()
+      ..addListener((event) {
+        _handleCallbackEvent(event);
+      });
+
+    Future.delayed(Duration(seconds: 1), () {
+      controller.jumpToPosition(5);
+      controller.jumpToPosition(10);
+      controller.jumpToPosition(3);
+      controller.jumpToPosition(2);
     });
+
+
+  }
+
+  void _handleCallbackEvent(ScrollEvent event) {
+    print(
+        "Scroll callback received with data: {direction: ${event.direction}}");
   }
 
   @override
@@ -49,18 +71,12 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: MultiDirectionalHorizontalList(
-
+        controller: controller,
         itemCount: 51,
         itemBuilder: (context, index) {
-
           return Text("data $index");
-
         },
-
-
-
       ),
-
     );
   }
 }
