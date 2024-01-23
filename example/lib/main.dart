@@ -52,8 +52,9 @@ class _MyHomePageState extends State<MyHomePage> {
           });
   }
 
-  void _handleCallbackEvent(ScrollEvent event) {
-    log("Scroll callback received with data: {direction: ${event.direction}}");
+  void _handleCallbackEvent(ScrollEvent? event) {
+    event?.randomCallback?.call();
+    log(event!.toString());
   }
 
   @override
@@ -68,11 +69,19 @@ class _MyHomePageState extends State<MyHomePage> {
         child: MultiDirectionalHorizontalList(
           controller: controller,
           initialScrollOffset: 200,
-          itemCount: 51,
-          // height: 50,
+          itemCount: 20,
+          onLeftLoaded: () {
+            print("fuck you we are left");
+          },
+          onRightLoaded: () {
+            print("fuck you we are right");
+          },
           itemBuilder: (context, index) {
             return Container(
+              margin: EdgeInsets.symmetric(horizontal: 1),
               width: 100,
+              color: Colors.yellow,
+              alignment: Alignment.center,
               child: Text(
                 "data $index",
                 textAlign: TextAlign.left,

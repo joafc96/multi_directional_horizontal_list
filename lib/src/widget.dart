@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 
 import 'index.dart';
@@ -23,6 +24,12 @@ class MultiDirectionalHorizontalList extends StatefulWidget {
   final double height;
 
   /// @optional
+  final VoidCallback? onLeftLoaded;
+
+  /// @optional
+  final VoidCallback? onRightLoaded;
+
+  /// @optional
   /// An optional controller to request changes and to notify consumers of changes
   /// via an optional listener
   final MultiDirectionalHorizontalListController? controller;
@@ -32,10 +39,12 @@ class MultiDirectionalHorizontalList extends StatefulWidget {
     required this.itemCount,
     required this.itemBuilder,
     this.controller,
+    this.onLeftLoaded,
+    this.onRightLoaded,
     this.height = 40,
     this.delta = 50,
     this.initialScrollOffset = 0,
-    this.duration = const Duration(milliseconds: 600),
+    this.duration = const Duration(milliseconds: 1000),
   });
 
   @override
@@ -45,10 +54,15 @@ class MultiDirectionalHorizontalList extends StatefulWidget {
 
 class _MultiDirectionalHorizontalListState
     extends State<MultiDirectionalHorizontalList> {
+  /// Scroll controller to handle the scrollview
   late final ScrollController _scrollController;
 
+  /// Left and Right temp variables to hold the values
   final List<int> left = [];
   final List<int> right = [];
+
+  /// Event tracking between functions
+  ScrollEvent? _pendingEvent;
 
   @override
   void initState() {
@@ -111,6 +125,9 @@ class _MultiDirectionalHorizontalListState
     for (int i = 0; i < middleIndex; i++) {
       right.add(i);
     }
+
+    print(left);
+    print(right);
   }
 
   _jumpToPosition(double? position) {
@@ -128,35 +145,43 @@ class _MultiDirectionalHorizontalListState
   }
 
   _scrollListener() {
-  //   if (_scrollController.offset >=
-  //       _scrollController.position.maxScrollExtent - widget.delta) {
-  //     _onEndReached();
-  //     if (widget.onTopLoaded != null) {
-  //       widget.onTopLoaded!();
-  //     }
-  //   }
-  //   if (_scrollController.offset <=
-  //       _scrollController.position.minScrollExtent + widget.delta) {
-  //     _onStartReached();
-  //     if (widget.onBottomLoaded != null) {
-  //       widget.onBottomLoaded!();
-  //     }
-  //   }
-  //   if (widget.controller != null) {
-  //     widget.onScroll!(_scrollController.offset);
-  //   }
-  // }
-  //
-  // _onEndReached() {
-  //   setState(() {
-  //     bottom.add(bottom.length);
-  //   });
-  // }
-  //
-  // _onStartReached() {
-  //   setState(() {
-  //     top.add(-top.length - 1);
-  //   });
+    if (widget.controller == null) return;
+
+    late final UserScrollDirection userScrollDirection;
+
+    ScrollDirection scrollDirection =
+        _scrollController.position.userScrollDirection;
+
+    switch (scrollDirection) {
+      case ScrollDirection.idle:
+        userScrollDirection = UserScrollDirection.idle;
+        break;
+      case ScrollDirection.forward:
+        userScrollDirection = UserScrollDirection.left;
+        break;
+      case ScrollDirection.reverse:
+        userScrollDirection = UserScrollDirection.right;
+        break;
+    }
+
+    _pendingEvent = ScrollEvent(
+      userScrollDirection,
+      position: _scrollController.offset,
+      randomCallback: () {},
+    );
+    widget.controller?.notifyListeners(_pendingEvent);
+
+    if (_scrollController.offset <=
+        _scrollController.position.minScrollExtent + widget.delta) {
+      widget.onLeftLoaded?.call();
+      return;
+    }
+
+    if (_scrollController.offset >=
+        _scrollController.position.maxScrollExtent - widget.delta) {
+      widget.onRightLoaded?.call();
+      return;
+    }
   }
 
   @override
@@ -170,7 +195,7 @@ class _MultiDirectionalHorizontalListState
         center: const ValueKey('right-sliver-list'),
         slivers: <Widget>[
           SliverList(
-            // key: const ValueKey('left-sliver-list'),
+            key: const ValueKey('left-sliver-list'),
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
                 return widget.itemBuilder(context, left[index]);

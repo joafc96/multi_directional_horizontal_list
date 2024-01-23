@@ -22,34 +22,29 @@ class ControllerFeedback {
 /// Sent as part of a [ScrollEventCallback] to track progress of swipe events
 /// [left] is emitted when the user swipes left,
 /// [right] is emitted when the user swipes right.
-enum ScrollDirection {
+enum UserScrollDirection {
   left,
   right,
+  idle,
 }
 
 /// The type used to encapsulate events related to scrolling
-typedef ScrollEventCallback = void Function(ScrollEvent event);
+typedef ScrollEventCallback = void Function(ScrollEvent? event);
 
 class ScrollEvent {
-  final ScrollDirection direction;
-  final double? scrollPosition;
-  final Function? onTopLoaded;
-
-  final Function? onBottomLoaded;
-
-  final Function? onScroll;
+  final UserScrollDirection direction;
+  final double? position;
+  final Function? randomCallback;
 
   const ScrollEvent(
     this.direction, {
-    this.scrollPosition,
-    this.onTopLoaded,
-    this.onBottomLoaded,
-    this.onScroll,
+    this.position,
+    this.randomCallback,
   });
 
   @override
   toString() {
-    return "ScrollEvent: Direction: $direction";
+    return "ScrollEvent: Direction: $direction - Position: $position";
   }
 
   @override
@@ -57,7 +52,7 @@ class ScrollEvent {
     if (other is! ScrollEvent) {
       return false;
     }
-    return direction == other.direction;
+    return direction == other.direction && position == other.position;
   }
 
   @override

@@ -31,7 +31,7 @@ class MultiDirectionalHorizontalListController {
   }
 
   /// Send [ScrollEvent] notifications to all registered listeners
-  void notifyListeners(ScrollEvent event) {
+  void notifyListeners(ScrollEvent? event) {
     for (var listener in _listeners) {
       listener.call(event);
     }
