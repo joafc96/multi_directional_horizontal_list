@@ -45,7 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
   DateTime _selectedDateStart = DateTime.now();
   int _activeIndex = 0;
 
-  final double itemWidth = 80;
+  final double itemWidth = 85;
 
   late double middle = -(MediaQuery.sizeOf(context).width) / 2 + itemWidth / 2;
 
@@ -146,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         style: GoogleFonts.lato(
                                           textStyle: Theme.of(context)
                                               .textTheme
-                                              .titleSmall,
+                                              .titleMedium,
                                         ),
                                       ),
                                     ],
@@ -189,7 +189,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 style: GoogleFonts.lato(
                                   textStyle: Theme.of(context)
                                       .textTheme
-                                      .labelSmall
+                                      .labelMedium
                                       ?.copyWith(color: Colors.black),
                                 ),
                               )
