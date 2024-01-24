@@ -1,7 +1,9 @@
 name: multi_directional_horizontal_list
 description: "A multi directional horizontal list widget with next and previous."
 version: 0.0.1
-homepage:
+homepage: https://github.com/joafc96/multi_directional_horizontal_list
+repository: https://github.com/joafc96/multi_directional_horizontal_list
+issue_tracker: https://github.com/joafc96/multi_directional_horizontal_list/issues
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
