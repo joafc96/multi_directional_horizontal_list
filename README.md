@@ -5,7 +5,7 @@
 
 A `ListView` in which list items can be horizontally scrolled in multi direction.
 
-<img src="https://raw.githubusercontent.com/Dimibe/sticky_grouped_list/master/assets/new-screenshot-for-readme.png" width="300"> <img src="https://raw.githubusercontent.com/Dimibe/sticky_grouped_list/master/assets/chat.png" width="300">
+<img src="https://github.com/joafc96/multi_directional_horizontal_list/blob/main/gifs/example_multi_directional_horizontal_list.mp4" width="300">
 
 ## Features
 * Easy creation of horizontal timeline-like interfaces.
