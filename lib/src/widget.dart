@@ -34,7 +34,7 @@ class MultiDirectionalHorizontalList extends StatefulWidget {
   /// via an optional listener
   final MultiDirectionalHorizontalListController? controller;
 
-  const MultiDirectionalHorizontalList({
+  const MultiDirectionalHorizontalList.builder({
     super.key,
     required this.itemCount,
     required this.itemBuilder,
@@ -44,7 +44,7 @@ class MultiDirectionalHorizontalList extends StatefulWidget {
     this.height = 40,
     this.delta = 50,
     this.initialScrollOffset = 0,
-    this.duration = const Duration(milliseconds: 1000),
+    this.duration = const Duration(milliseconds: 500),
   });
 
   @override
@@ -125,9 +125,6 @@ class _MultiDirectionalHorizontalListState
     for (int i = 0; i < middleIndex; i++) {
       right.add(i);
     }
-
-    print(left);
-    print(right);
   }
 
   _jumpToPosition(double? position) {
@@ -140,7 +137,7 @@ class _MultiDirectionalHorizontalListState
     _scrollController.animateTo(
       position ?? widget.initialScrollOffset,
       duration: duration,
-      curve: Curves.fastOutSlowIn,
+      curve: Curves.fastEaseInToSlowEaseOut,
     );
   }
 
@@ -186,7 +183,7 @@ class _MultiDirectionalHorizontalListState
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: widget.height,
       child: CustomScrollView(
         key: const Key("CustomScrollView"),

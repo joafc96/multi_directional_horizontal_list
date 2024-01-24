@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'index.dart';
+import 'types.dart';
 
 /// Allows a consumer to control the list position and track current page
 /// and any emitted events through a [ScrollEventCallback].
