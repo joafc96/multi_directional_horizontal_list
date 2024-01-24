@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:multi_directional_horizontal_list/multi_directional_horizontal_list.dart';
 import 'package:intl/intl.dart';
 
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.pinkAccent),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Multi Directional Horizontal List'),
+      home: const MyHomePage(title: ''),
     );
   }
 }
@@ -44,7 +45,9 @@ class _MyHomePageState extends State<MyHomePage> {
   DateTime _selectedDateStart = DateTime.now();
   int _activeIndex = 0;
 
-  late double middle = -(MediaQuery.sizeOf(context).width) / 2 + 100 / 2;
+  final double itemWidth = 80;
+
+  late double middle = -(MediaQuery.sizeOf(context).width) / 2 + itemWidth / 2;
 
   @override
   initState() {
@@ -63,123 +66,220 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: MultiDirectionalHorizontalList.builder(
-        controller: controller,
-        initialScrollOffset: middle,
-        itemCount: 20,
-        height: 50,
-        onLeftLoaded: () {},
-        onRightLoaded: () {},
-        itemBuilder: (context, index) {
-          DateTime currentDateTime = DateTime(DateTime.now().year,
-              DateTime.now().month, DateTime.now().day + index);
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Month and Year
+          Text(
+            _selectedDateStart.monthAndDay,
+            key: const ValueKey(0),
+            maxLines: 1,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.lato(
+              textStyle: Theme.of(context).textTheme.headlineMedium,
+            ),
+          ),
 
-          bool isSelected = _selectedDateStart.month == currentDateTime.month &&
-              _selectedDateStart.year == currentDateTime.year &&
-              _selectedDateStart.day == currentDateTime.day;
+          MultiDirectionalHorizontalList.builder(
+            controller: controller,
+            initialScrollOffset: middle,
+            itemCount: 100,
+            height: 60,
+            onLeftLoaded: () {},
+            onRightLoaded: () {},
+            itemBuilder: (context, index) {
+              // Current Date Time
+              DateTime currentDateTime = DateTime(
+                DateTime.now().year,
+                DateTime.now().month,
+                DateTime.now().day + index,
+              );
 
-          bool isToday = currentDateTime.day == DateTime.now().day &&
-              currentDateTime.month == DateTime.now().month &&
-              currentDateTime.year == DateTime.now().year;
+              bool isSelected = currentDateTime.isSelected(_selectedDateStart);
 
-          return InkWell(
-            splashFactory: NoSplash.splashFactory,
-            highlightColor: Colors.transparent,
-            onTap: () {
-              setState(() {
-                _selectedDateStart = currentDateTime;
-                _activeIndex = index;
-              });
-            },
-            child: SizedBox(
-              width: 100,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  NotificationListener(
-                    onNotification:
-                        (SizeChangedLayoutNotification notification) {
-                      controller
-                          .animateTo(middle + (_activeIndex - 1) * 100 + 100);
+              bool isToday = currentDateTime.isToday;
 
-                      return true;
-                    },
-                    child: SizeChangedLayoutNotifier(
-                      child: AnimatedSwitcher(
+              return InkWell(
+                splashFactory: NoSplash.splashFactory,
+                highlightColor: Colors.transparent,
+                onTap: () {
+                  setState(() {
+                    _selectedDateStart = currentDateTime;
+                    _activeIndex = index;
+                  });
+                },
+                child: SizedBox(
+                  width: itemWidth,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      NotificationListener(
+                        onNotification:
+                            (SizeChangedLayoutNotification notification) {
+                          controller.animateTo(
+                            middle + (_activeIndex - 1) * itemWidth + itemWidth,
+                          );
+                          return true;
+                        },
+                        child: SizeChangedLayoutNotifier(
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            child: isSelected
+                                ? Stack(
+                                    children: [
+                                      Positioned(
+                                        top: 0,
+                                        right: 0,
+                                        child: isToday
+                                            ? const RedDot()
+                                            : const SizedBox.shrink(),
+                                      ),
+                                      Text(
+                                        getDay(
+                                          currentDateTime,
+                                          abbreviate: false,
+                                        ),
+                                        key: const ValueKey(0),
+                                        maxLines: 1,
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.lato(
+                                          textStyle: Theme.of(context)
+                                              .textTheme
+                                              .titleSmall,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : Stack(
+                                    children: [
+                                      Positioned(
+                                        top: 0,
+                                        right: 0,
+                                        child: isToday
+                                            ? const RedDot()
+                                            : const SizedBox.shrink(),
+                                      ),
+                                      Text(
+                                        getDay(
+                                          currentDateTime,
+                                          abbreviate: true,
+                                        ),
+                                        key: const ValueKey(1),
+                                        maxLines: 1,
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.lato(
+                                          textStyle: Theme.of(context)
+                                              .textTheme
+                                              .titleSmall
+                                              ?.copyWith(
+                                                color: Colors.black54,
+                                              ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                          ),
+                        ),
+                      ),
+                      AnimatedSwitcher(
                         duration: const Duration(milliseconds: 300),
                         child: isSelected
                             ? Text(
-                                getDay(currentDateTime, abbreviate: true),
+                                currentDateTime.dayInNo,
                                 key: const ValueKey(0),
-                                maxLines: 1,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black,
-                                  fontWeight: isToday
-                                      ? FontWeight.bold
-                                      : FontWeight.normal,
-                                  overflow: TextOverflow.clip,
+                                style: GoogleFonts.lato(
+                                  textStyle: Theme.of(context)
+                                      .textTheme
+                                      .labelSmall
+                                      ?.copyWith(color: Colors.black),
                                 ),
                               )
                             : Text(
-                                getDay(currentDateTime, abbreviate: true),
+                                currentDateTime.dayInNo,
                                 key: const ValueKey(1),
-                                maxLines: 1,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: Colors.black38,
-                                  fontWeight: isToday
-                                      ? FontWeight.bold
-                                      : FontWeight.normal,
-                                  overflow: TextOverflow.clip,
+                                style: GoogleFonts.lato(
+                                  textStyle: Theme.of(context)
+                                      .textTheme
+                                      .labelSmall
+                                      ?.copyWith(color: Colors.black54),
                                 ),
                               ),
                       ),
-                    ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      AnimatedScale(
+                        duration: const Duration(milliseconds: 600),
+                        scale: isSelected ? 1 : 0,
+                        curve: isSelected
+                            ? Curves.decelerate
+                            : Curves.easeOutQuart,
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(40),
+                              topLeft: Radius.circular(40),
+                            ),
+                            color: Colors.black54,
+                          ),
+                          width: itemWidth,
+                          height: 4,
+                        ),
+                      )
+                    ],
                   ),
-                  DateTime.now().year == currentDateTime.year
-                      ? AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 300),
-                          child: isSelected
-                              ? Text(
-                                  getDayInNo(currentDateTime),
-                                  key: const ValueKey(0),
-                                  style: TextStyle(
-                                    fontSize: 9,
-                                    color: Colors.black,
-                                  ),
-                                )
-                              : Text(
-                                  getDayInNo(currentDateTime),
-                                  key: const ValueKey(1),
-                                  style: TextStyle(
-                                    fontSize: 9,
-                                    color: Colors.black38,
-                                  ),
-                                ),
-                        )
-                      : const SizedBox.shrink(),
-                ],
-              ),
-            ),
-          );
-        },
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
 }
 
-String getMonth(DateTime dateTime, {bool includeYear = false}) {
-  if (includeYear) {
-    return DateFormat.yMMMM().format(dateTime);
+extension DateUtils on DateTime {
+  bool get isToday {
+    final now = DateTime.now();
+    return now.day == day && now.month == month && now.year == year;
   }
-  return DateFormat.MMMM().format(dateTime);
+
+  bool get isTomorrow {
+    final tomorrow = DateTime.now().add(const Duration(days: 1));
+    return tomorrow.day == day &&
+        tomorrow.month == month &&
+        tomorrow.year == year;
+  }
+
+  bool get isYesterday {
+    final yesterday = DateTime.now().subtract(const Duration(days: 1));
+    return yesterday.day == day &&
+        yesterday.month == month &&
+        yesterday.year == year;
+  }
+
+  bool isSelected(DateTime selected) {
+    return selected.day == day &&
+        selected.month == month &&
+        selected.year == year;
+  }
+
+  String get monthAndDay {
+    return DateFormat.yMMMM().format(this);
+  }
+
+  String get dayInNo {
+    return DateFormat.d().format(this);
+  }
+
+  String getMonth({bool includeYear = false}) {
+    if (includeYear) {
+      return DateFormat.yMMMM().format(this);
+    }
+    return DateFormat.MMMM().format(this);
+  }
 }
 
 String getDay(DateTime dateTime,
@@ -193,6 +293,21 @@ String getDay(DateTime dateTime,
   return DateFormat.EEEE().format(dateTime);
 }
 
-String getDayInNo(DateTime dateTime) {
-  return DateFormat.d().format(dateTime);
+class RedDot extends StatelessWidget {
+  const RedDot({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return FractionalTranslation(
+      translation: const Offset(1.0, -1.0),
+      child: Container(
+        height: 5,
+        width: 5,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.redAccent,
+        ),
+      ),
+    );
+  }
 }

@@ -6,31 +6,39 @@ import 'index.dart';
 
 class MultiDirectionalHorizontalList extends StatefulWidget {
   /// @required
+  /// [itemCount] Total number of widgets to be rendered (includes both left, right and also center)
   final int itemCount;
 
-  /// A function that converts a context and an index to a Widget to be rendered
+  /// @required
+  /// [itemBuilder] Function that converts a context and an index to a Widget to be rendered
   final IndexedWidgetBuilder itemBuilder;
 
   /// @optional
+  /// [delta] The offset required to detect the ends before the last offset (left/right)
   final int delta;
 
   /// @optional
+  /// [initialScrollOffset] The offset provided to be where the scroll controller has to be scrolled
   final double initialScrollOffset;
 
   /// @optional
+  /// [duration] Duration for the animateTo method
   final Duration duration;
 
   /// @optional
+  /// [height] As horizontal requires a definite height to be provided to stop unbounded height exception
   final double height;
 
   /// @optional
+  /// [onLeftLoaded]  An optional callback triggered when scroll reaches left most end
   final VoidCallback? onLeftLoaded;
 
   /// @optional
+  /// [onRightLoaded] An optional callback triggered when scroll reaches right most end
   final VoidCallback? onRightLoaded;
 
   /// @optional
-  /// An optional controller to request changes and to notify consumers of changes
+  /// [controller] An optional controller to request changes and to notify consumers of changes
   /// via an optional listener
   final MultiDirectionalHorizontalListController? controller;
 
@@ -44,7 +52,7 @@ class MultiDirectionalHorizontalList extends StatefulWidget {
     this.height = 40,
     this.delta = 50,
     this.initialScrollOffset = 0,
-    this.duration = const Duration(milliseconds: 500),
+    this.duration = const Duration(milliseconds: 600),
   });
 
   @override
@@ -71,6 +79,31 @@ class _MultiDirectionalHorizontalListState
     populateLeftAndRightList(widget.itemCount);
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    widget.controller?.disposeListeners();
+    super.dispose();
+  }
+
+  populateLeftAndRightList(int count) {
+    // Ensure count is an odd number to have 0 in the middle
+    if (count.isEven) {
+      count++;
+    }
+
+    int middleIndex = count ~/ 2;
+
+    // Add numbers to the left of 0
+    for (int i = 1; i < middleIndex; i++) {
+      left.add(-i);
+    }
+
+    // Add numbers to the right of 0
+    for (int i = 0; i < middleIndex; i++) {
+      right.add(i);
+    }
   }
 
   initialiseScrollController() {
@@ -100,31 +133,6 @@ class _MultiDirectionalHorizontalListState
           break;
       }
     });
-  }
-
-  @override
-  void dispose() {
-    widget.controller?.disposeListeners();
-    super.dispose();
-  }
-
-  populateLeftAndRightList(int count) {
-    // Ensure count is an odd number to have 0 in the middle
-    if (count.isEven) {
-      count++;
-    }
-
-    int middleIndex = count ~/ 2;
-
-    // Add numbers to the left of 0
-    for (int i = 1; i < middleIndex; i++) {
-      left.add(-i);
-    }
-
-    // Add numbers to the right of 0
-    for (int i = 0; i < middleIndex; i++) {
-      right.add(i);
-    }
   }
 
   _jumpToPosition(double? position) {
