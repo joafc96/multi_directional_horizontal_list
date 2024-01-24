@@ -1,7 +1,7 @@
 # multi_directional_horizontal_list
 
-[![pub package](https://img.shields.io/pub/v/sticky_grouped_list.svg)](https://pub.dev/packages/sticky_grouped_list)
-[![package publisher](https://img.shields.io/pub/publisher/sticky_grouped_list.svg)](https://pub.dev/packages/sticky_grouped_list)
+[![pub package](https://img.shields.io/pub/v/sticky_grouped_list.svg)](https://pub.dev/packages/multi_directional_horizontal_list)
+[![package publisher](https://img.shields.io/pub/publisher/sticky_grouped_list.svg)](https://pub.dev/packages/multi_directional_horizontal_list)
 
 A `ListView` in which list items can be horizontally scrolled in multi direction.
 
@@ -17,7 +17,7 @@ A `ListView` in which list items can be horizontally scrolled in multi direction
 Add the package to your pubspec.yaml:
 
  ```yaml
- multi_directional_horizontal_list: ^0.0.1
+ multi_directional_horizontal_list: ^0.0.1-beta.1
  ```
 
 In your dart file, import the library:
@@ -33,7 +33,6 @@ Create a `MultiDirectionalHorizontalList` Widget:
 
    MultiDirectionalHorizontalList(
         controller: controller,
-        initialScrollOffset: 200,
         itemCount: 20,
          onLeftLoaded: () {
             print("Reached left end");
