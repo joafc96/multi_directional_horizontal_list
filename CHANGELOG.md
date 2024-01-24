@@ -1,3 +1,7 @@
+## 0.0.3
+
+* Updated the path of the gif to be shown.
+
 ## 0.0.2
 
 * Fixed some typos in readme and updated changelog.
