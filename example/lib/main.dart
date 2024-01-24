@@ -56,6 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ..addListener((event) {
             _handleCallbackEvent(event);
           });
+    super.initState();
   }
 
   void _handleCallbackEvent(ScrollEvent? event) {
@@ -137,10 +138,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                             : const SizedBox.shrink(),
                                       ),
                                       Text(
-                                        getDay(
-                                          currentDateTime,
-                                          abbreviate: false,
-                                        ),
+                                        currentDateTime.getDay(
+                                            abbreviate: false),
                                         key: const ValueKey(0),
                                         maxLines: 1,
                                         textAlign: TextAlign.center,
@@ -162,10 +161,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                             : const SizedBox.shrink(),
                                       ),
                                       Text(
-                                        getDay(
-                                          currentDateTime,
-                                          abbreviate: true,
-                                        ),
+                                        currentDateTime.getDay(
+                                            abbreviate: true),
                                         key: const ValueKey(1),
                                         maxLines: 1,
                                         textAlign: TextAlign.center,
@@ -280,17 +277,16 @@ extension DateUtils on DateTime {
     }
     return DateFormat.MMMM().format(this);
   }
-}
 
-String getDay(DateTime dateTime,
-    {bool abbreviate = false, bool alphabet = false}) {
-  if (alphabet) {
-    return DateFormat.EEEEE().format(dateTime);
+  String getDay({bool abbreviate = false, bool alphabet = false}) {
+    if (alphabet) {
+      return DateFormat.EEEEE().format(this);
+    }
+    if (abbreviate) {
+      return DateFormat.E().format(this);
+    }
+    return DateFormat.EEEE().format(this);
   }
-  if (abbreviate) {
-    return DateFormat.E().format(dateTime);
-  }
-  return DateFormat.EEEE().format(dateTime);
 }
 
 class RedDot extends StatelessWidget {
