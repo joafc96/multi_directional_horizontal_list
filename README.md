@@ -16,7 +16,7 @@ A `ListView` in which list items can be horizontally scrolled in multi direction
 Add the package to your pubspec.yaml:
 
  ```yaml
- multi_directional_horizontal_list: ^0.0.1-beta.1
+ multi_directional_horizontal_list: ^0.0.2
  ```
 
 In your dart file, import the library:
