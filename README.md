@@ -1,6 +1,6 @@
 # multi_directional_horizontal_list
 
-[![Pub Version](https://img.shields.io/pub/v/multi_directional_horizontal_list?logoColor=5BBF0F)](https://pub.dev/packages/multi_directional_horizontal_list)
+[![Pub Version](https://img.shields.io/pub/v/multi_directional_horizontal_list)](https://pub.dev/packages/multi_directional_horizontal_list)
 
 A `ListView` in which list items can be horizontally scrolled in multi direction.
 
